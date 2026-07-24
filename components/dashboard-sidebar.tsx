@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import {
   LayoutDashboard,
   Library,
@@ -24,6 +24,12 @@ const navItems = [
 
 export function DashboardSidebar() {
   const pathname = usePathname()
+  const router = useRouter()
+
+  function logout() {
+    localStorage.removeItem("token")
+    router.push("/login")
+  }
 
   return (
     <aside className="flex w-64 shrink-0 flex-col border-r border-border bg-sidebar">
@@ -66,6 +72,12 @@ export function DashboardSidebar() {
       </nav>
 
       <div className="border-t border-border px-3 py-4">
+        <button
+          onClick={logout}
+          className="mb-2 flex w-full items-center justify-center rounded-lg border border-border bg-card px-3 py-2 text-xs text-muted-foreground transition-colors hover:text-destructive hover:border-destructive/30"
+        >
+          Logout
+        </button>
         <div className="flex items-center gap-3 rounded-md px-3 py-2">
           <div className="flex size-8 items-center justify-center rounded-full bg-secondary text-xs font-semibold text-secondary-foreground">
             EK
