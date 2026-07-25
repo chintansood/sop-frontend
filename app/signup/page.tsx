@@ -29,17 +29,22 @@ export default function SignupPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ fullName, email, password, role: "ADMIN", schoolName }),
+        credentials: "omit",
       })
       if (!regRes.ok) {
         const err = await regRes.json()
         throw new Error(err.error || "Registration failed")
       }
 
+      // Small delay to ensure DB write is committed
+      await new Promise(resolve => setTimeout(resolve, 500))
+
       // Login immediately after
       const loginRes = await fetch(`${BASE_URL}/api/v1/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
+        credentials: "omit",
       })
       if (!loginRes.ok) {
         throw new Error("Login after signup failed")
