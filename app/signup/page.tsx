@@ -47,7 +47,8 @@ export default function SignupPage() {
         credentials: "omit",
       })
       if (!loginRes.ok) {
-        throw new Error("Login after signup failed")
+        const errData = await loginRes.json().catch(() => ({}))
+        throw new Error(`Login failed: ${loginRes.status} — ${errData.error || "unknown"}`)
       }
       const loginData = await loginRes.json()
 
