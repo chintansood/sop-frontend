@@ -69,6 +69,12 @@ export default function LoginPage() {
             {loading ? "Logging in..." : "Login"}
           </button>
         </div>
+      <p className="mt-4 text-center text-sm text-muted-foreground">
+          Staff member?{" "}
+          <a href="https://sop-frontend-staff-henna.vercel.app/login" className="text-primary hover:underline">
+            Login to staff portal →
+          </a>
+        </p>
       </div>
     </div>
   )
