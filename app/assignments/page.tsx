@@ -5,7 +5,7 @@ import { WhatHappensNext } from "@/components/what-happens-next"
 
 export default function AssignmentsPage() {
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex min-h-screen bg-background pt-14 md:pt-0">
       <DashboardSidebar />
 
       <div className="flex min-w-0 flex-1 flex-col">
