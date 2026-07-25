@@ -88,9 +88,8 @@ export default function StaffPage() {
   const [pending, setPending] = useState<StaffCompliance[]>([])
 
   async function fetchPending() {
-    const data = await apiFetch("/api/v1/auth/users")
-    const inactiveUsers = (data.users ?? []).filter((u: any) => !u.isActive)
-    setPending(inactiveUsers)
+    const data = await apiFetch("/api/v1/auth/users/pending")
+    setPending(data.users ?? [])
   }
 
   useEffect(() => {
