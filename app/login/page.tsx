@@ -20,6 +20,7 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password }),
       })
       setToken(data.accessToken)
+      if (data.user?.schoolName) localStorage.setItem("schoolName", data.user.schoolName)
       router.push("/")
     } catch (err: any) {
       setError(err.message || "Login failed")
