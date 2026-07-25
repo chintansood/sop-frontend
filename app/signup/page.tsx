@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { apiFetch, setToken } from "@/lib/api"
+import { setToken } from "@/lib/api"
 
 export default function SignupPage() {
   const [schoolName, setSchoolName] = useState("")
@@ -22,21 +22,33 @@ export default function SignupPage() {
     setLoading(true)
     setError("")
     try {
-      // Register first
-      await apiFetch("/api/v1/auth/register", {
+      const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"
+
+      // Register
+      const regRes = await fetch(`${BASE_URL}/api/v1/auth/register`, {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ fullName, email, password, role: "ADMIN", schoolName }),
       })
-      // Then login
-      const loginData = await apiFetch("/api/v1/auth/login", {
+      if (!regRes.ok) {
+        const err = await regRes.json()
+        throw new Error(err.error || "Registration failed")
+      }
+
+      // Login immediately after
+      const loginRes = await fetch(`${BASE_URL}/api/v1/auth/login`, {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       })
+      if (!loginRes.ok) {
+        throw new Error("Login after signup failed")
+      }
+      const loginData = await loginRes.json()
+
       // Store token and school name
       setToken(loginData.accessToken)
       localStorage.setItem("schoolName", schoolName)
-      // Small delay to ensure localStorage is set
-      await new Promise(resolve => setTimeout(resolve, 100))
       router.push("/")
     } catch (err: any) {
       setError(err.message || "Signup failed")
