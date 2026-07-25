@@ -73,8 +73,13 @@ export default function Page() {
               Set up your school →
             </Link>
             <Link href="/login" className="w-full sm:w-auto rounded-lg border border-border bg-card px-6 py-3 text-sm font-medium text-foreground hover:bg-muted transition-colors">
-              Login to dashboard
+              Admin login
             </Link>
+          </div>
+          <div className="mt-4">
+            <a href="https://sop-frontend-staff-henna.vercel.app/signup" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              Staff member? Request access here →
+            </a>
           </div>
         </div>
 
