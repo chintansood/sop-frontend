@@ -70,6 +70,7 @@ export default function StaffPage() {
           password: newPassword,
           role: newRole,
           schoolName: savedSchool,
+          autoApprove: true,
         }),
       })
       const data = await res.json()
