@@ -58,18 +58,25 @@ export default function StaffPage() {
     setAdding(true)
     setAddMsg(null)
     try {
-      await apiFetch("/api/v1/auth/register", {
+      const savedSchool = localStorage.getItem("schoolName") ?? "My School"
+      const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"
+      const res = await fetch(`${BASE_URL}/api/v1/auth/register`, {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "omit",
         body: JSON.stringify({
           fullName: newName,
           email: newEmail,
           password: newPassword,
           role: newRole,
+          schoolName: savedSchool,
         }),
       })
-      setAddMsg("Staff member added successfully!")
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || "Failed to add staff")
+      setAddMsg("Staff member added successfully! They can now login.")
       setNewName(""); setNewEmail(""); setNewPassword("")
-      setTimeout(() => { setShowAddStaff(false); setAddMsg(null); window.location.reload() }, 1500)
+      setTimeout(() => { setShowAddStaff(false); setAddMsg(null); window.location.reload() }, 2000)
     } catch (err: any) {
       setAddMsg(`Error: ${err.message}`)
     } finally {
