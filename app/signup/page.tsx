@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { setToken } from "@/lib/api"
 
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"
+
 export default function SignupPage() {
   const [schoolName, setSchoolName] = useState("")
   const [fullName, setFullName]     = useState("")
@@ -22,40 +24,24 @@ export default function SignupPage() {
     setLoading(true)
     setError("")
     try {
-      const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"
-
-      // Register
-      const regRes = await fetch(`${BASE_URL}/api/v1/auth/register`, {
+      const res = await fetch(`${BASE_URL}/api/v1/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "omit",
         body: JSON.stringify({ fullName, email, password, role: "ADMIN", schoolName }),
-        credentials: "omit",
       })
-      if (!regRes.ok) {
-        const err = await regRes.json()
-        throw new Error(err.error || "Registration failed")
+
+      const data = await res.json()
+
+      if (!res.ok) throw new Error(data.error || "Registration failed")
+
+      if (data.accessToken) {
+        setToken(data.accessToken)
+        localStorage.setItem("schoolName", schoolName)
+        router.push("/")
+      } else {
+        setError("Account created but could not auto-login. Please login manually.")
       }
-
-      // Small delay to ensure DB write is committed
-      await new Promise(resolve => setTimeout(resolve, 500))
-
-      // Login immediately after
-      const loginRes = await fetch(`${BASE_URL}/api/v1/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-        credentials: "omit",
-      })
-      if (!loginRes.ok) {
-        const errData = await loginRes.json().catch(() => ({}))
-        throw new Error(`Login failed: ${loginRes.status} — ${errData.error || "unknown"}`)
-      }
-      const loginData = await loginRes.json()
-
-      // Store token and school name
-      setToken(loginData.accessToken)
-      localStorage.setItem("schoolName", schoolName)
-      router.push("/")
     } catch (err: any) {
       setError(err.message || "Signup failed")
     } finally {
