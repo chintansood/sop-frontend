@@ -22,17 +22,21 @@ export default function SignupPage() {
     setLoading(true)
     setError("")
     try {
-      const data = await apiFetch("/api/v1/auth/register", {
+      // Register first
+      await apiFetch("/api/v1/auth/register", {
         method: "POST",
         body: JSON.stringify({ fullName, email, password, role: "ADMIN", schoolName }),
       })
-      // Auto login after signup
+      // Then login
       const loginData = await apiFetch("/api/v1/auth/login", {
         method: "POST",
         body: JSON.stringify({ email, password }),
       })
+      // Store token and school name
       setToken(loginData.accessToken)
       localStorage.setItem("schoolName", schoolName)
+      // Small delay to ensure localStorage is set
+      await new Promise(resolve => setTimeout(resolve, 100))
       router.push("/")
     } catch (err: any) {
       setError(err.message || "Signup failed")
