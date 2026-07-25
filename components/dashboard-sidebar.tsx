@@ -15,7 +15,7 @@ const navItems = [
   { label: "Question Review", icon: ClipboardCheck,  href: "/question-review" },
   { label: "Assignments",     icon: Send,            href: "/assignments" },
   { label: "Compliance",      icon: BarChart3,       href: "/compliance" },
-  { label: "Staff",           icon: Users,           href: "/staff-admin" },
+  { label: "Staff",           icon: Users,           href: "/staff" },
 ]
 
 export function DashboardSidebar() {
