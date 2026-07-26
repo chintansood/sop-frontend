@@ -23,10 +23,28 @@ export function DashboardSidebar() {
   const router   = useRouter()
   const [open, setOpen] = useState(false)
   const [schoolName, setSchoolName] = useState("My School")
+  const [userName, setUserName]     = useState("Admin")
+  const [userInitials, setUserInitials] = useState("A")
 
   useEffect(() => {
     const saved = localStorage.getItem("schoolName")
     if (saved) setSchoolName(saved)
+    // Get user info from token
+    const token = localStorage.getItem("token")
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split(".")[1]))
+        // fetch user details
+        fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"}/api/v1/auth/me`, {
+          headers: { Authorization: `Bearer ${token}` }
+        }).then(r => r.json()).then(d => {
+          if (d.fullName) {
+            setUserName(d.fullName)
+            setUserInitials(d.fullName.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2))
+          }
+        }).catch(() => {})
+      } catch {}
+    }
   }, [])
 
   function logout() {
@@ -85,10 +103,10 @@ export function DashboardSidebar() {
           Logout
         </button>
         <div className="flex items-center gap-2 px-2 py-1">
-          <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-secondary text-xs font-bold text-secondary-foreground">EK</div>
+          <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-secondary text-xs font-bold text-secondary-foreground">{userInitials}</div>
           <div>
-            <p className="text-xs font-medium text-foreground">Elena Kovac</p>
-            <p className="text-xs text-muted-foreground">Compliance Admin</p>
+            <p className="text-xs font-medium text-foreground">{userName}</p>
+            <p className="text-xs text-muted-foreground">Admin</p>
           </div>
         </div>
       </div>
