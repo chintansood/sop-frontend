@@ -142,6 +142,28 @@ export default function SopLibraryPage() {
                         Assign SOP
                       </button>
                     </div>
+                    <label className="mt-2 flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-dashed border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:border-primary hover:text-primary transition-colors">
+                      <Upload className="size-3" />
+                      Upload new version
+                      <input type="file" accept=".pdf,.docx" className="hidden"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0]
+                          if (!file) return
+                          const token = getToken()
+                          const form = new FormData()
+                          form.append("document", file)
+                          setUploadMsg("Uploading new version...")
+                          const res = await fetch(
+                            `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"}/api/v1/sops/${sop.id}/versions`,
+                            { method: "POST", headers: { Authorization: `Bearer ${token}` }, body: form }
+                          )
+                          const data = await res.json()
+                          if (!res.ok) { setUploadMsg(`Error: ${data.error}`) }
+                          else { setUploadMsg(`✓ ${data.message || "New version uploaded! Staff re-assigned."}`); fetchSops() }
+                          e.target.value = ""
+                        }}
+                      />
+                    </label>
                   </div>
                 )
               })}
