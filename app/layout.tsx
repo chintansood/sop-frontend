@@ -6,7 +6,7 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 
 export const metadata: Metadata = {
-  title: 'Compliance Dashboard — SOP Management',
+  title: 'SOP Management System',
   description: 'Admin compliance dashboard for school SOP management',
   generator: 'v0.app',
   icons: {
