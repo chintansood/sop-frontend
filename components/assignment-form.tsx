@@ -15,7 +15,11 @@ export function AssignmentForm() {
   const [sops, setSops]         = useState<SOP[]>([])
   const [sopId, setSopId]       = useState("")
   const [role, setRole]         = useState(roleOptions[0].value)
-  const [dueDate, setDueDate]   = useState("2026-08-31")
+  const [dueDate, setDueDate]   = useState(() => {
+    const d = new Date()
+    d.setDate(d.getDate() + 14)
+    return d.toISOString().split("T")[0]
+  })
   const [loading, setLoading]   = useState(false)
   const [result, setResult]     = useState<string | null>(null)
   const [error, setError]       = useState<string | null>(null)

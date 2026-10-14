@@ -57,6 +57,50 @@ export default function CompliancePage() {
       .finally(() => setLoading(false))
   }, [])
 
+  function handleExportCSV() {
+    if (!sops.length && !depts.length) {
+      alert("No data available to export");
+      return;
+    }
+    const lines = [
+      ["SOP COMPLIANCE REPORT", new Date().toLocaleDateString()],
+      [],
+      ["Overall Compliance (%)", overview?.compliancePercentage ?? 0],
+      ["Total Passed", overview?.passedAssignments ?? 0],
+      ["Total Overdue", overview?.overdueAssignments ?? 0],
+      ["Total Assignments", overview?.totalAssignments ?? 0],
+      [],
+      ["SOP TITLE", "CATEGORY", "ASSIGNED", "PASSED", "PASS RATE (%)", "OVERDUE"],
+      ...sops.map(s => [
+        `"${s.title.replace(/"/g, "\"\"")}"`,
+        `"${s.category.replace(/"/g, "\"\"")}"`,
+        s.total,
+        s.passed,
+        s.passRate,
+        s.overdue
+      ]),
+      [],
+      ["DEPARTMENT", "STAFF COUNT", "TOTAL ASSIGNED", "PASSED", "PASS RATE (%)", "OVERDUE"],
+      ...depts.map(d => [
+        `"${d.departmentName.replace(/"/g, "\"\"")}"`,
+        d.staffCount,
+        d.total,
+        d.passed,
+        d.passRate,
+        d.overdue
+      ])
+    ];
+
+    const csvContent = lines.map(row => row.join(",")).join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `sop-compliance-report-${new Date().toISOString().split("T")[0]}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
   return (
     <div className="flex min-h-screen bg-background pt-14 md:pt-0">
       <DashboardSidebar />
@@ -66,7 +110,7 @@ export default function CompliancePage() {
             <h1 className="text-lg font-semibold text-foreground">Compliance report</h1>
             <p className="text-sm text-muted-foreground">School-wide SOP compliance overview</p>
           </div>
-          <button className="flex items-center gap-2 rounded-md border border-border bg-card px-3.5 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted">
+          <button onClick={handleExportCSV} className="flex items-center gap-2 rounded-md border border-border bg-card px-3.5 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted active:scale-95">
             <Download className="size-4" />
             Export CSV
           </button>

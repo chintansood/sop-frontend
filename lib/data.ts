@@ -3,6 +3,7 @@ export type ComplianceStatus =
   | "In Progress"
   | "Overdue"
   | "Not Started"
+  | "Failed"
 
 export type Assignment = {
   id: string

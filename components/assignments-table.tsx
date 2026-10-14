@@ -23,7 +23,7 @@ function mapStatus(status: string): ComplianceStatus {
     IN_PROGRESS: "In Progress",
     OVERDUE:     "Overdue",
     NOT_STARTED: "Not Started",
-    FAILED:      "Overdue",
+    FAILED:      "Failed",
     STALE:       "Not Started",
   }
   return map[status] ?? "Not Started"
